@@ -1,0 +1,54 @@
+##Properties file for personal proteome
+
+##GENCODE Annotation File
+annotationFile /Users/davidthomas/Peppy/synthesis/annotation/gencode.v11.annotation.gtf
+//annotationFile /Users/davidthomas/Peppy/synthesis/annotation/gencode.v11.chrmM.gtf
+//annotationFile /Users/davidthomas/Peppy/synthesis/annotation/gencode.v10.annotation.gtf
+//annotationFile /Users/davidthomas/Peppy/synthesis/annotation/gencode.v11.chrm1.gtf
+
+
+##Reference genome directory
+//refGenomeDir /Users/davidthomas/Peppy/synthesis/chromosome/WHIM16_XENO/
+//refGenomeDir /Users/davidthomas/Peppy/synthesis/chromosome/WHIM16_GERMLINE/
+//refGenomeDir /Users/davidthomas/Peppy/synthesis/chromosome/WHIM2_XENO/
+//refGenomeDir /Users/davidthomas/Peppy/synthesis/chromosome/WHIM2_GERMLINE/
+refGenomeDir /Users/davidthomas/Peppy/synthesis/chromosome/hg19/
+//refGenomeDir /Users/davidthomas/Peppy/synthesis/chromosome/hg18/
+
+##Genome directory
+genomeDir /Users/davidthomas/Peppy/synthesis/chromosome/WHIM16_XENO/
+//genomeDir /Users/davidthomas/Peppy/synthesis/chromosome/WHIM16_GERMLINE/
+//genomeDir /Users/davidthomas/Peppy/synthesis/chromosome/WHIM2_XENO/
+//genomeDir /Users/davidthomas/Peppy/synthesis/chromosome/WHIM2_GERMLINE/
+
+
+//genomeDir /Users/davidthomas/Peppy/synthesis/chromosome/WHIM2_xeno_and_germline/
+//genomeDir /Users/davidthomas/Peppy/synthesis/chromosome/WHIM16_germline_old/
+//genomeDir /Users/davidthomas/Peppy/synthesis/chromosome/hg19/
+//genomeDir /Users/davidthomas/Peppy/synthesis/chromosome/hg18/
+
+##Output directory
+outputDir /Users/davidthomas/Peppy/synthesis/output/
+
+##Regions of Interest file
+//regionsOfInterestFile /Users/davidthomas/Peppy/synthesis/annotation/aCGH_whim2_hg19_all.txt
+regionsOfInterestFile /Users/davidthomas/Peppy/synthesis/annotation/whim2.array.log2.wgs.cna.overlap.txt
+
+
+##File Names
+outputFileName PersonalProteomeOutput.fasta
+statsOutputFile Statistics.txt
+dataPointsFileName DataPoints.txt
+
+##Runtime parameters
+
+//proteomeLite true
+proteomeLite false
+
+detailedRunInfo true
+//detailedRunInfo false
+//useModifiedStopsAndStarts true
+useModifiedStopsAndStarts false
+//preFilterOutTranWithoutStartCodon true
+preFilterOutTranWithoutStartCodon false
+
