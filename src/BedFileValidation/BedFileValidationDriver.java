@@ -26,22 +26,19 @@ public class BedFileValidationDriver {
 		/*  hello! */
 		printGreeting();
 		
-		//bedFile
-//		String args0 = "/Users/davidthomas/Peppy/synthesis/BedFileValidation/BEDFILE_GM12878_SDS_Cyto_dta_1331232525773_report.txt.bed";
-//		String args0 = "/Users/davidthomas/Peppy/synthesis/BedFileValidation/BEDFILE_GM12878_WCL_dta_1331305355847_report.txt.bed";
-		String args0 = "/Users/davidthomas/Peppy/synthesis/BedFileValidation/";
-		//chrm Dir
+		if(args.length != 1){
+			System.out.println("The properties file should be the only parameter.");
+			return;
+		}
+		Properties.loadProperties(new File(args[0]));
+
 	
-//		String args1 = "/Users/davidthomas/Peppy/synthesis/chromosome/WHIM2_xeno_and_germline/";
-//		String args1 = "/Users/davidthomas/Peppy/synthesis/chromosome/WHIM16_germline/";
-		String args1 =  "/Users/davidthomas/Peppy/synthesis/chromosome/hg19/";
-//		String args1 =  "/Users/davidthomas/Peppy/synthesis/chromosome/hg18/";
+
 		//Output Dir
-		String args2 = "/Users/davidthomas/Peppy/synthesis/BedFileValidation/output/";
 		
 		
 		/*Brian Risk*/
-		File jobsDir = new File(args0);
+		File jobsDir = new File(Properties.peppyFileDirectory);
 		File[] potentialJobsFiles = jobsDir.listFiles();
 		ArrayList<File> jobFiles = new ArrayList<File>();
 		if (potentialJobsFiles != null) {
@@ -63,7 +60,7 @@ public class BedFileValidationDriver {
 		U.p("Starting up: " + startTime);
 		for(int j = 0; j < jobFiles.size(); j++){
 			U.p("Working on file " + (j + 1) + " of " + jobFiles.size());
-			BedFileValidation bfv = new BedFileValidation(jobFiles.get(j).getAbsolutePath(), args1, args2, cal );
+			BedFileValidation bfv = new BedFileValidation(jobFiles.get(j).getAbsolutePath(), Properties.genomeDir, Properties.outputDir, cal);
 			
 			
 			/*Do some work!*/

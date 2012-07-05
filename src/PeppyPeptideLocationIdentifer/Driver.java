@@ -6,9 +6,9 @@ import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.util.ArrayList;
 
+import PeppyPeptideLocationIdentifer.Properties;
 import MiscTools.GencodePPComparisonTool;
 import PersonalProteome.Annotation;
-import PersonalProteome.Properties;
 import PersonalProteome.U;
 
 public class Driver {
@@ -31,18 +31,13 @@ public class Driver {
 		/*  hello! */
 		printGreeting();
 		
-		String args0 = "/Users/davidthomas/Peppy/synthesis/annotation/gencode.v11.annotation.gtf";
-//		String args0 = "/Users/davidthomas/Peppy/synthesis/annotation/gencode.v11.chrm12.gtf";
-//		String args0 = "/Users/davidthomas/Peppy/synthesis/annotation/gencode.v11.chrm1.gtf";
-//		String args0 = "/Users/davidthomas/Peppy/synthesis/annotation/gencode.v11.chrm15.gtf";
-		String args1 = "/Users/davidthomas/Peppy/synthesis/chromosome/hg19/";
-//		String args2 = "/Users/davidthomas/Peppy/synthesis/PeptideLocationFinder/GM12878_SDS_Cyto_dta_1330973336733_report.txt";
-		String args2 = "/Users/davidthomas/Peppy/synthesis/PeptideLocationFinder/mutations/";
-//		String args2 = "/Users/davidthomas/Peppy/synthesis/PeptideLocationFinder/";
-		String args3 = "/Users/davidthomas/Peppy/synthesis/PeptideLocationFinder/output/";
-//		String args4 = "results.txt";
+		if(args.length != 1){
+			System.out.println("The properties file should be the only parameter.");
+			return;
+		}
+		Properties.loadProperties(new File(args[0]));
 		
-		File jobsDir = new File(args2);
+		File jobsDir = new File(Properties.peppyFileDirectory);
 		File[] potentialJobsFiles = jobsDir.listFiles();
 		ArrayList<File> jobFiles = new ArrayList<File>();
 		if (potentialJobsFiles != null) {
@@ -55,9 +50,9 @@ public class Driver {
 
 		
 		/*setup and do some work!*/
-		PeptideLocationIdentifer locFinder = new PeptideLocationIdentifer(args0, args1, args3);
+		PeptideLocationIdentifer locFinder = new PeptideLocationIdentifer(Properties.annotationFile, Properties.outputDir);
 
-		locFinder.uploadProteome();
+		locFinder.uploadAnnotation();
 		
 		for(File f: jobFiles){
 			locFinder.identifyLocations(f.getAbsolutePath());

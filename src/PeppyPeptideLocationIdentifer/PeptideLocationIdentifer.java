@@ -23,10 +23,10 @@ import PersonalProteome.Gene.Transcript;
 
 
 /**
- * PeptideLocationIdentifer is a tool that uses Personal Proteome to create a proteome to use to identify a peptides location in the genome.  It outputs the coordinates of the peptide as would be used in the UCSC browser.
+ * PeptideLocationIdentifer is a tool that uses Personal Proteome to create a proteome to use to identify a peptides location in the genome.
+ * It outputs the coordinates of the peptide as would be used in the UCSC browser.
  * It allows for splice junctions to be identified in the UCSC browser.
  *
- * *****FIX THE OFF BY ONE ERROR ON THOSE SELECT PEPTIDES*******
  * 
  * @author David "Corvette" Thomas
  *
@@ -38,7 +38,6 @@ public class PeptideLocationIdentifer {
 	boolean useMito = false;
 	//File storage information
 	String annotationFile;
-	String chrmDir;
 	String outputDir;
 	
 	//Information for writing out files
@@ -67,10 +66,9 @@ public class PeptideLocationIdentifer {
 	 * @param chrmDir  The directory of chromosome files.
 	 * @param outputDir  The directory to place output files.
 	 */
-	public PeptideLocationIdentifer(String annotationFile, String chrmDir, String outputDir){
+	public PeptideLocationIdentifer(String annotationFile, String outputDir){
 		//Store the needed input and output file locaitons.
 		this.annotationFile = annotationFile;
-		this.chrmDir = chrmDir;
 		this.outputDir = outputDir;
 	}
 	
@@ -78,23 +76,22 @@ public class PeptideLocationIdentifer {
 	 * uploadProteome Uses PP to upload an annotation and genome, and create a proteome from it.  This will then be used to get the location of peptides from a peppy results file.
 	 * This method only preps this object to find peptide locations.  It only needs to be ran once per object.
 	 */
-	public void uploadProteome(){
+	public void uploadAnnotation(){
 		//Get the current time
 		cal = Calendar.getInstance();
 		startTime = sdf.format(cal.getTime());
 		U.p("Starting up: " + startTime);
 		
-		U.p("Uploading Annoation and populating the genome directory.");
+		U.p("Uploading Annoation.");
 		U.startStopwatch();
 		Annotation a = new Annotation(useMito);
-		a.populateChrmArray(this.chrmDir);
 		a.populateGTFList(new File(annotationFile));
 		this.GTFlist = a.getAnnotaitonLines();
 		U.stopStopwatch();
 		
-		U.p("Uploading Transcripts and Creating Proteins");
+		U.p("Creating Transcripts.");
 		U.startStopwatch();
-		a.populateTranscriptsAndCDS(false);
+		a.populateTranscriptsAndCDSNoProtein();
 		this.transcriptList = a.getTranscripts();
 		U.stopStopwatch();
 		
@@ -127,7 +124,8 @@ public class PeptideLocationIdentifer {
 		//Read in Peppy Results file
 		U.p("Uploading peppy results file.");
 		U.startStopwatch();
-		peppyFileHeader = uploadPeppyResults(peppyResultsFile);
+//		peppyFileHeader = uploadPeppyResults(peppyResultsFile);
+		peppyFileHeader = uploadPeppyResultsIntelligently(peppyResultsFile);
 		U.stopStopwatch();
 		
 		//Remove the newLine character from the end of the peppyFileHeader to allow for the extra column headers to be inserted.
@@ -171,7 +169,7 @@ public class PeptideLocationIdentifer {
 			
 			//Create a unqiue folder for hte output with a timestamp for a name.
 			outFile = new File(outputDir + "/" + outputDirectoryFormat.format(cal.getTime()) +  "/");
-			outFile.mkdir();
+			outFile.mkdirs();
 			String outputDir = outFile.getAbsolutePath() + "/";
 		
 			//Create a buffer and a writer for creating output with.
@@ -285,9 +283,9 @@ public class PeptideLocationIdentifer {
 
 				 }
 				 
-					if(currentPeppyLine.getID() == 96955){
-						U.p("Found!");
-					}
+//					if(currentPeppyLine.getID() == 96955){
+//						U.p("Found!");
+//					}
 				 if(peptideLocationInProtein != -1){
 				 
 
@@ -295,8 +293,8 @@ public class PeptideLocationIdentifer {
 					 int splitLoc = -1;
 					 for(int k = 0; k < beingWorkedOn.getExonSplitLocations().size(); k++){
 						 
-//						 U.p("Split Location " + k + " is: " + beingWorkedOn.getExonSplitLocations().get(k));
 						 if((beingWorkedOn.getExonSplitLocations().get(k)) > peptideLocationInProtein){
+							
 							 //Determine if a splice junction is found within a peptide
 							 if(beingWorkedOn.getExonSplitLocations().get(k) < (peptideStopLocationInProtein)){
 								 spliceJuncWithinPeptide.add(k);
@@ -377,7 +375,8 @@ public class PeptideLocationIdentifer {
 
 							 
 							 
-						 boolean spliceMessUp = false;
+						@SuppressWarnings("unused")
+						boolean spliceMessUp = false;
 
 						 int inCDS = currentCDS;
 						 ArrayList<CDS> cdsList =  beingWorkedOn.getCDS();
@@ -459,8 +458,7 @@ public class PeptideLocationIdentifer {
 									 }
 								 }
 							 }else{
-//								 startLocs.remove(0);
-//								 startLocs.add(cdsList.get(inCDS + 1).getStart());
+
 								 blockCount--;
 								 spliceMessUp = true;
 							 }
@@ -475,30 +473,7 @@ public class PeptideLocationIdentifer {
 						 startLoc = startLocs.get(0);
 						 stopLoc = stopLocs.get(stopLocs.size() - 1);
 						 //Block size and Block start.  We always start at index 0, and the count is simply 1 + number of junctions are spanned by the peptide.
-						 
-						 
-						 
-						 //DEBUG
-//						 if(blockCount == 2){
-//							 for(int z = 0; z < startLocs.size(); z++){
-//								 if(stopLocs.get(z) - startLocs.get(z) == 0){
-//									 
-//								 }
-//							 }
-//							 
-//						 }
-//						 if(show){
-//							 U.p("Splice Junctions are");
-//							 for(int r = 0; r < spliceJuncWithinPeptide.size(); r++){
-//								 U.p("Splice Junc " + beingWorkedOn.getExonSplitLocations().get(spliceJuncWithinPeptide.get(r)));
-//							 }
-//							 U.p("Line being worked on is: " + currentPeppyLine.toString());
-//							 U.p("inCDS is: " + inCDS);
-//							 U.p("CDS regions are");
-//							 for(int e = 0; e < beingWorkedOn.getCDS().size(); e++){
-//								 U.p("CDS " + e + " is: " + beingWorkedOn.getCDS().get(e).toString());
-//							 }
-//						 }
+
 
 						//set the block sizes
 						//set block starts
@@ -508,25 +483,13 @@ public class PeptideLocationIdentifer {
 							 
 							 size = stopLocs.get(y) - startLocs.get(y);
 
-//							 if(spliceMessUp){
-//								 size--;
-//							 }
+
 							 rollingStartLoc = startLocs.get(y) - startLocs.get(0);
 							 blockSize += size;
 							 blockSize += ",";
 							 blockStart += rollingStartLoc;
 							 blockStart += ",";
-							 
-//							 if(size == 0){
-
-//							 	if(show){
-//								 U.p("Current Stop Location: " + stopLocs.get(y));
-//								 U.p("Current Start Location: " + startLocs.get(y));
-//							 	}
-
-//							 }
-							 
-							 
+	 
 						 }//for loop
 						 
  
@@ -545,22 +508,10 @@ public class PeptideLocationIdentifer {
 					 
 					 /*ChromosomeName Identified*/
 					 chromosomeName = Definitions.convertChrmNumToString(GTFlist.get(beingWorkedOn.getiD()).getChromosomeName());
-					 
-					 
 
-
-//					 if(blockCount == 1){
-//						if(Integer.valueOf(blockSize) != currentPeppyLine.getPeptideSequence().length() * 3){
-//							U.p("Peptide size does not match block size!");
-//							U.p("Peptide: " + currentPeppyLine.toString());
-//						}
-//					 }
 					 
 				 }//Valid peptide found in protein
 				 
-//				 if(blockCount == 2){
-//
-//				 }
 				
 				 //show = true here beings that a valid peptide was found.  Output all valid peptides.
 				 show = true;
@@ -570,7 +521,7 @@ public class PeptideLocationIdentifer {
 			String bedLine = chromosomeName  + "\t" + startLoc + "\t" + stopLoc + "\t" + currentPeppyLine.getPeptideSequence() + "\t" + currentPeppyLine.getID() + "\t" + strand +  "\t" + startLoc + "\t" + stopLoc + "\t" + "0" + "\t"+ blockCount + "\t" + blockSize + "\t" + blockStart;
 				 
 			String ending = chromosomeName  + "\t" + strand + "\t" + startLoc + "\t" + stopLoc + "\t" + blockCount + "\t" + blockSize + "\t" + blockStart;
-			//Devug
+			//Debug
 
 			PEPPYListEndings.add(ending);
 			
@@ -608,6 +559,63 @@ public class PeptideLocationIdentifer {
 		
 	}
 	
+	
+	private String uploadPeppyResultsIntelligently(String fileLocation){
+		String header = "";
+		String entireHeader = "";
+		try {
+			Scanner s = new Scanner(new File(fileLocation));
+			String token;
+			
+			for(int i = 0; i < 4; i++){
+				token = s.nextLine();
+				if(token.toLowerCase().trim().startsWith("format")){
+					entireHeader += token;
+					entireHeader += "\n";
+					continue;
+				}
+				if(token.toLowerCase().trim().startsWith(">")){
+					entireHeader += token;
+					entireHeader += "\n";
+					continue;
+				}
+				entireHeader += token;
+				entireHeader += "\n";
+				header += token;
+				header += "\n";
+			}
+			
+			
+			/*Parse each line*/
+			while(s.hasNextLine()){
+//				String[] chunks = header.split("\\s");
+			
+				//Header information is now loaded up into the header string
+				ArrayList<String> values = new ArrayList<String>();
+				
+				token = s.nextLine();
+				String[] lineChunks = token.split("\\s");
+				for(int j = 0; j < lineChunks.length; j++){
+					
+					values.add(lineChunks[j]);
+					
+				}//for
+	
+				
+				
+				PEPPYList.add(new PEPPY_RESULTS_Line_FORMAT16(values, header));
+			
+			
+			}//while
+		} catch (FileNotFoundException e) {
+			//Auto-generated catch block
+			e.printStackTrace();
+		//Throw an error when a unparsable token is read in.
+		} catch (NoSuchElementException e) {
+			U.p("Invalid file.  Unable to completely parse input.  Output will not contain all peptides.");
+		}	
+		return entireHeader;
+	}
 	/**
 	 * uploadPeppyResults uploads a peppy results file with modifications and stores it in the PEPPYList.
 	 * @param fileLocation  The location of the peppy output file to upload and use.
@@ -805,13 +813,7 @@ public class PeptideLocationIdentifer {
 				count++;
 			}
 			
-			
-			
-			
-			
-			
-			
-			
+
 		//File is not found.
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

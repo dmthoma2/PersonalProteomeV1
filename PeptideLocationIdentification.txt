@@ -1,0 +1,18 @@
+##Properties file for PeppyPeptideLocationIdentifer
+
+##Directory containing peppy files to uplaod
+
+peppyFileDirectory /Users/davidthomas/Peppy/synthesis/PeptideLocationFinder/
+//peppyFileDirectory /Users/davidthomas/Peppy/synthesis/PeptideLocationFinder/mutations/
+
+
+##Annotation file to use for identifing locations
+annotationFile /Users/davidthomas/Peppy/synthesis/annotation/gencode.v10.annotation.gtf
+//annotationFile /Users/davidthomas/Peppy/synthesis/annotation/gencode.v11.chrm12.gtf
+//annotationFile /Users/davidthomas/Peppy/synthesis/annotation/gencode.v11.chrm1.gtf
+//annotationFile /Users/davidthomas/Peppy/synthesis/annotation/gencode.v11.chrm15.gtf
+
+
+##Directory to store output
+//outputDir /Users/davidthomas/Peppy/synthesis/PeptideLocationFinder/output/
+

@@ -97,6 +97,8 @@ public class Annotation{
 	public Annotation(boolean hasMito){
 		genomeHasMito = hasMito;
 	}
+	
+	
 	/**
 	 * For use with Proteome Lite, this simply allows for a single proteome to be created.
 	 * @param annotationFile
@@ -818,6 +820,122 @@ public class Annotation{
 	}//populateTranscriptsAndCDS
 		
 	
+	/**
+	 * populateTranscriptsAndCDSNoAmino is a very fast method for converting a read in GTF file into a bare bones arrayList of Transcript objects.  This
+	 * allows for use of the transcript objects methods without all of the overhead of creating proteins.
+	 */
+	public void populateTranscriptsAndCDSNoProtein(){
+
+		transcriptList = new ArrayList<Transcript>();
+		//Variables for the identification loop
+		int transcriptCount = 0;
+		int i = 0;
+		//A list of indices in the GTFlist of transcript objects to lookup and create
+		ArrayList<Integer> transcripts = new ArrayList<Integer>();
+		while(i < GTFlist.size()){
+			if(GTFlist.get(i).getFeatureType() == Definitions.featureTypeTRANSCRIPT){
+				transcriptCount++;
+				/*Add the index of the GTFLine to create a transcript from*/
+				transcripts.add(i);
+				
+			}//if
+			i++;
+		}//while
+
+		//Variables for the addition to the transcript list loop
+		int addCount = 0;
+		Transcript t;	
+		//Iterate through each chromosome file, and create all of the transcripts possible from each one
+		//Code is performed in this order to minize HDD reads.
+
+		GENCODE_GTF_Line beingTested;
+		
+		//Check each transcript to determine if it is using the currently open file.
+		for(int j = 0; j < transcripts.size(); j++){
+			
+			//Get the currently used transcripts line
+			beingTested = GTFlist.get(transcripts.get(j));
+			
+
+				
+				//sequence is the DNA strand from the chromosome file for this transcript
+				String sequence;
+				StringBuffer sb = new StringBuffer();
+				for(int k = 0; k < (beingTested.getStopLocation() + 1 - beingTested.getStartLocation()); k++){
+					sb.append(Definitions.NULL_CHAR);
+				}//for
+				
+				
+				sequence = sb.toString();
+				
+				
+				//Construct a basic transcript to be added to the list
+				t = new Transcript(beingTested.getChromosomeName(), sequence, beingTested.getGenomicStrand() , transcripts.get(j), beingTested.getStartLocation(), beingTested.getStopLocation(), false);
+
+
+				//Prime the loop
+				//c simply stores each line as it is iterated through
+				GENCODE_GTF_Line c = GTFlist.get(transcripts.get(j) + 1);
+				boolean startFound = false;
+				boolean stopFound = false;
+				
+				//preFilter starts determines whether to throw out transcripts that do not contain a start codon
+				
+				//Loops through each line after this transcript, until another transcript is encountered
+				for(int x = transcripts.get(j) + 1; x < GTFlist.size() && c.getFeatureType() != Definitions.featureTypeTRANSCRIPT; x++){
+					c = GTFlist.get(x);
+
+					
+					//If a start codon is found, then set startFound to true
+					if(c.getFeatureType() == Definitions.featureTypeSTART_CODON){
+						startFound = true;
+					}
+					//If a start codon is found, then set startFound to true
+					if(c.getFeatureType() == Definitions.featureTypeSTOP_CODON){
+						stopFound = true;
+					}
+					
+					//If a selenocysteine is found, then add it to the the transcripts seleno list
+					if(c.getFeatureType() == Definitions.featureTypeSELENOCYSTEINE){
+						Seleno s = new Seleno(c.getStartLocation(), c.getStopLocation());
+						t.addSeleno(s);
+					}
+					//if a CDS is found, add it to this transcripts CDS list
+					if(c.getFeatureType() == Definitions.featureTypeCDS){
+						CDS temp = new CDS(c.getStartLocation(), c.getStopLocation(), c.getGenomicPhase());
+						t.addCDS(temp);
+
+					}
+					
+					
+				}
+				//Confirm that the transcript has a CDS to code from
+				if(t.getCDS().size() > 0){
+		
+					
+					t.setHasStartCodon(startFound);
+					t.setHasStopCodon(stopFound);
+					
+					//Create t's protein and add it to the list
+
+					t.createProtein();
+
+					
+
+					//Now that t has a score, has CDS regions, and has been confirmed to have a start, add it to the list of transcripts to produce proteins with
+					transcriptList.add(t);
+					addCount++;
+				}
+
+
+				
+		
+			
+		}//inner for
+		
+
+		
+	}//populateTranscriptsAndCDS
 	
 	/**
 	 * createOutputFiles adds each genes protein to a fasta format file and computes statistics about the transcripts.  The proteins to output are stored in transcriptList.  The proteins are 

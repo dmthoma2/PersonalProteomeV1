@@ -427,7 +427,7 @@ public class BedFileValidation {
 		
 		
 		outFile = new File( outputDir + "/" + outputDirectoryFormat.format(cal.getTime()) +  "/");
-		outFile.mkdir();
+		outFile.mkdirs();
 		String outputDir = outFile.getAbsolutePath() + "/";
 
 		try {

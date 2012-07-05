@@ -1,0 +1,18 @@
+##Properties file for Bed File Validation
+
+##Directory containing peppy files to uplaod
+bedFileDirectory /Users/davidthomas/Peppy/synthesis/BedFileValidation/
+
+
+
+##Directory containing genome to use
+//genomeDir /Users/davidthomas/Peppy/synthesis/chromosome/WHIM2_xeno_and_germline/
+//genomeDir /Users/davidthomas/Peppy/synthesis/chromosome/WHIM16_germline/
+genomeDir /Users/davidthomas/Peppy/synthesis/chromosome/hg19/
+//genomeDir /Users/davidthomas/Peppy/synthesis/chromosome/hg18/
+
+
+
+##Directory to store output
+outputDir /Users/davidthomas/Peppy/synthesis/BedFileValidation/output/
+

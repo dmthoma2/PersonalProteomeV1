@@ -11,6 +11,8 @@ public class Definitions {
 	public final static char[] mitoAminoAcidList = {'K','N','K','N','T','T','T','T','.','S','.','S','M','I','M','I','Q','H','Q','H','P','P','P','P','R','R','R','R','L','L','L','L','E','D','E','D','A','A','A','A','G','G','G','G','V','V','V','V','.','Y','.','Y','S','S','S','S','W','C','W','C','L','F','L','F'};
 	
 	
+	public final static char NULL_CHAR = '%';
+	
 	/*Generic date format to use accross prersonal proteome*/
 	public final static String DATE_FORMAT = "MM-dd-yyyy HH:mm:ss";
 	/*GENCODE GTF values*/
