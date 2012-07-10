@@ -65,7 +65,7 @@ public class BedFileValidation {
 		
 		//Get the file locaitons for each chromosome file
 		populateChrmArray(chrmDir);
-	}
+	}//BedFileValidation
 	
 	
 	/**
@@ -97,7 +97,7 @@ public class BedFileValidation {
 		
 		
 
-	}
+	}//validate
 	
 	/**
 	 * uploadBedFile allows uploads and stores lines for each bed file.
@@ -228,8 +228,8 @@ public class BedFileValidation {
 			if(k == 22){
 				if(!genomeHasMito){
 					continue;
-				}
-			}
+				}//if
+			}//if
 						
 			seq = new Sequence_DNA(chrmFile[k]);
 			sb = new StringBuffer(seq.getNucleotideSequences().get(0).getSequence());
@@ -244,7 +244,7 @@ public class BedFileValidation {
 				//Ignore lines that do not occur on the chromosome currently being worked on. chromosome
 				if(beingTested.getChromosomeName() != k + 1){
 					continue;
-				}
+				}//if
 
 				int blockCount = Integer.valueOf(beingTested.getBlockCount());
 				String dnaSeq = sb.substring(beingTested.getStartLocation(), beingTested.getStopLocation());;
@@ -268,15 +268,15 @@ public class BedFileValidation {
 						blckSize = (Integer.valueOf(sizes.next()));
 						if(beingTested.getStrand() == Definitions.genomicStrandPOSITIVE){
 
-						}
+						}//if
 							
 						
 						buildingSeq += dnaSeq.substring(blckStart, blckStart + blckSize);
-					}
+					}//for
 					
 					
 					dnaSeq = buildingSeq;
-				}
+				}//if
 				
 					beingTested.setDnaSeq(dnaSeq);
 			}//inner for
@@ -311,7 +311,7 @@ public class BedFileValidation {
 			
 			if(dnaSequence.equals("")){
 				continue;
-			}
+			}//if
 			
 			//Convert the DNA into a Protein
 			char [] codon = new char[3];
@@ -331,7 +331,7 @@ public class BedFileValidation {
 				startPosition = stopPosition - 1;
 				stopPosition = -1;
 				isForwardsStrand = false;
-			}
+			}//if
 	
 			//Iterate through the sequence and convert codons.
 			for (index = startPosition ; index != stopPosition; index += increment) {
@@ -346,7 +346,7 @@ public class BedFileValidation {
 	
 					}else{
 						aminoAcid = Definitions.aminoAcidList[PersonalProteome.Gene.Transcript.indexForCodonArray(codon, isForwardsStrand)];
-					}
+					}//else
 	
 					buildingProtein.append(aminoAcid);
 					
@@ -355,8 +355,8 @@ public class BedFileValidation {
 					mod = 0;
 				} else {
 					mod++;
-				}
-			}
+				}//else
+			}//for
 			
 			protein = buildingProtein.toString();
 			
@@ -377,7 +377,7 @@ public class BedFileValidation {
 			}else{
 				//the proteins are the same length
 				limit = protein.length();
-			}
+			}//else
 			
 			//Convert any characters that are different to lower case.
 			for(int n = 0; n < limit; n++){
@@ -387,7 +387,7 @@ public class BedFileValidation {
 					//If the comparison is a delayed start ignore it
 					if(protein.charAt(n) == Definitions.START_NOT_FOUND_CHAR){
 						continue;
-					}
+					}//if
 					variantCount++;
 					String charToLower = protein.substring(n, n + 1);
 					charToLower = charToLower.toLowerCase();
@@ -395,27 +395,27 @@ public class BedFileValidation {
 					String end = protein.substring(n + 1);
 					protein = start + charToLower + end;
 					
-				}
+				}//if
 				
-			}
+			}//for
 			
 			//Determine which errors happen with the bed file line.
 			if(variantCount > 0 || lengthMismatch || BEDlist.get(i).getDnaSeq().length() != protein.length()*3){
 				if(variantCount > 0){
 					variantCountTotal++;
-				}
+				}//if
 				if(lengthMismatch){
 					aminoLengthMistacth++;
 					
-				}
+				}//if
 				if(BEDlist.get(i).getDnaSeq().length() != protein.length()*3){
 					dnaSeqLengthMismatch++;
-				}
+				}//if
 				
 				misMatchedList.add(variantCount + "\t" + protein + "\t" + BEDlist.get(i));
 			}else{
 				matchedList.add(variantCount + "\t" + protein + "\t" + BEDlist.get(i));
-			}
+			}//else
 		}//iterate bed file
 		
 		
@@ -451,14 +451,14 @@ public class BedFileValidation {
 			sb.append("VaraintCount" + "\t" +"ProteinProduced" + "\t" + "BedLine" + "\n");
 			for(String s: misMatchedList){
 				sb.append(s + "\n");
-			}
+			}//for
 			
 			sb.append("\n\n\n");
 			sb.append("Results from bed file that matched." + "\n");
 			sb.append("VaraintCount" + "\t" +"ProteinProduced" + "\t" + "BedLine" + "\n");
 			for(String s: matchedList){
 				sb.append(s + "\n");
-			}
+			}//for
 			
 			//Write the file and close it out.
 			out.write(sb.toString());
@@ -468,7 +468,7 @@ public class BedFileValidation {
 		//Catch a file expception, specifically with file issues.
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}//catch
 	}//calcStatsandCreateOutput
 	
 	
@@ -480,7 +480,7 @@ public class BedFileValidation {
 	public void populateChrmArray(String chrmDir){
 		for(int i = 0; i < 22; i++){
 			chrmFile[i] = chrmDir + "chr" + (i + 1) + ".fa";
-		}
+		}//for
 		chrmFile[22] = chrmDir + "chrM.fa";
 		chrmFile[23] = chrmDir + "chrX.fa";
 		chrmFile[24] = chrmDir + "chrY.fa";

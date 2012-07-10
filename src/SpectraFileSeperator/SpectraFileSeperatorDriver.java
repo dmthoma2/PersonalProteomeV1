@@ -8,10 +8,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import BedFileValidation.BedFileValidation;
 import PersonalProteome.Definitions;
 import PersonalProteome.U;
 
+
+/**
+ * Driver for spectra file separator.  It handles input and calls the appropriate methods in SpectraFileSeperator.
+ * @author David "Corvette" Thomas
+ *
+ */
 public class SpectraFileSeperatorDriver {
 	//Look at maximum memory usage 
 	static MemoryUsage memoryUsage;
@@ -35,9 +40,9 @@ public class SpectraFileSeperatorDriver {
 			for (int i = 0; i < potentialJobsFiles.length; i++) {
 				if (potentialJobsFiles[i].getName().toLowerCase().endsWith(".txt")) {
 					jobFiles.add(potentialJobsFiles[i]);
-				}	
-			}
-		}
+				}//if
+			}//for
+		}//if
 		
 		
 		Calendar cal = Calendar.getInstance();
@@ -48,11 +53,12 @@ public class SpectraFileSeperatorDriver {
 		U.p("Starting up: " + startTime);
 		
 
-		
+		@SuppressWarnings("unused")
+		SpectraFileSeperator sfs;
 		for(int j = 0; j < jobFiles.size(); j++){
 			U.p("Working on file " + (j + 1) + " of " + jobFiles.size());
-			SpectraFileSeperator sfs = new SpectraFileSeperator(jobFiles.get(j).getAbsolutePath(), args1, cal);
-		}
+			sfs = new SpectraFileSeperator(jobFiles.get(j).getAbsolutePath(), args1, cal);
+		}//for
 		
 		
 		
@@ -68,14 +74,14 @@ public class SpectraFileSeperatorDriver {
 		/* i'm finished! */
 		printFarewell();
 		
-	}
+	}//main
 	
 	public static void printGreeting() {		
 		U.p("Bed file validation at the speed of a turbo-Vette!");
 		U.p("max available memory: " + (double) memoryUsage.getMax() / (1024 * 1024 * 1024) + " gigabytes");
-	}
+	}//printGreeting
 	
 	public static void printFarewell() {
 		U.p("Until next time, signing off...");
-	}
-}
+	}//printFarewell
+}//SpectraFileSeperatorDriver

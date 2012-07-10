@@ -15,6 +15,7 @@ import PersonalProteome.U;
  * ================"FileName"=======================
  * double double
  * double double
+ * ...
  * double double
  * double double
  * 
@@ -44,7 +45,7 @@ public class SpectraFileSeperator {
 		this.inputFile = inputFile;
 		this.cal = cal;
 		splitFiles();
-	}
+	}//SpectraFileSeperator
 	
 	
 	/**
@@ -91,8 +92,8 @@ public class SpectraFileSeperator {
 					token = s.next();
 					}else{
 						break;
-					}
-				}
+					}//else
+				}//while
 				
 				out.write(sb.toString());
 				out.flush();
@@ -100,8 +101,8 @@ public class SpectraFileSeperator {
 				
 				if(!s.hasNext()){
 					break;
-				}
-			}
+				}//if
+			}//while
 			
 		
 		//Default exception and action
