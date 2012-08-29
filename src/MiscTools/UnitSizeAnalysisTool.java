@@ -83,9 +83,11 @@ public class UnitSizeAnalysisTool {
 	ArrayList<Integer> geneSizes = new ArrayList<Integer>();
 	ArrayList<Integer> transcriptSizes = new ArrayList<Integer>();
 	ArrayList<Integer> CDSSizes = new ArrayList<Integer>();
+	ArrayList<Integer> geneGaps = new ArrayList<Integer>();
+
 	
-	//Standard Deviation
 	
+	//GeneGaps
 	
 	//Mean/Median
 	double exonSizeMean = 0;
@@ -96,13 +98,16 @@ public class UnitSizeAnalysisTool {
 	int transcriptSizeMedian = 0;
 	double CDSSizeMean = 0;
 	int CDSSizeMedian = 0;
+	double GAPSizeMean = 0;
+	int GAPSizeMedian = 0;
+	
 	
 	//Standard Deviation
 	double exonStanDev = 0;
 	double geneStanDev = 0;
 	double transcriptStanDev = 0;
 	double CDSStanDev = 0;
-	
+	double GAPStanDev = 0;
 	
 	//Max//Min
 	int exonSizeMax = 0;
@@ -113,6 +118,10 @@ public class UnitSizeAnalysisTool {
 	int transcriptSizeMin = 100000000;
 	int CDSSizeMax = 0;
 	int CDSSizeMin = 100000000;
+	int GAPSizeMax = 0;
+	int GAPSizeMin = 100000000;
+	
+	int GAPoverlapCount = 0;
 	
 	//List to store all of the transcirpts
 	ArrayList<GENCODE_GTF_Line> GTFlist;
@@ -213,6 +222,17 @@ public class UnitSizeAnalysisTool {
 		sb.append("Standard Deviation: " + CDSStanDev + "\n");
 		sb.append("\n");
 		sb.append("\n");
+		
+		sb.append("GAP between genes" + "\n");
+		sb.append("Total:              " + geneGaps.size() + "\n");
+		sb.append("Minimum:            " + GAPSizeMin + "\n");
+		sb.append("Maximum:            " + GAPSizeMax + "\n");
+		sb.append("Mean:               " + GAPSizeMean + "\n");
+		sb.append("Median:             " + GAPSizeMedian + "\n");
+		sb.append("Standard Deviation: " + GAPStanDev + "\n");
+		sb.append("Over lapping genes: " + GAPoverlapCount + "\n");
+		sb.append("\n");
+		sb.append("\n");
 		out.write(sb.toString());
 		out.flush();
 		out.close();
@@ -263,6 +283,9 @@ public class UnitSizeAnalysisTool {
 //			U.p(GTFlist.size());
 //		}
 		
+		
+		int previousStop = 0;
+		int previousChromo = 1;
 		//Populate the data arrays, and figure out the max and minimum size of each region
 		for(GENCODE_GTF_Line g: GTFlist){
 			
@@ -305,6 +328,31 @@ public class UnitSizeAnalysisTool {
 				continue;
 			}
 			if(g.getFeatureType() == Definitions.featureTypeGENE){
+				if(g.getChromosomeName() == previousChromo){
+					geneGaps.add(g.getStartLocation() - previousStop);
+					previousStop = g.getStopLocation();
+					
+					int size = geneGaps.get(geneGaps.size() - 1);
+					if(size < 0){
+						GAPoverlapCount++;
+//						U.p("Privous chromo " + previousChromo);
+//						U.p("size " + size);
+//						U.p("GTFLine " + g.toString());
+						
+					}//if
+					if(size >= 0){
+						if(size > GAPSizeMax){
+							GAPSizeMax = size;
+						}
+						if(size < GAPSizeMin){
+							GAPSizeMin = size;
+						}
+						GAPSizeMean += size;
+					}
+				}else{
+					previousChromo = g.getChromosomeName();
+					previousStop = 0;
+				}
 				geneSizes.add(g.getStopLocation() - g.getStartLocation() + 1);
 				int size = geneSizes.get(geneSizes.size() - 1);
 				if(size > geneSizeMax){
@@ -325,22 +373,25 @@ public class UnitSizeAnalysisTool {
 		CDSSizeMean /= CDSSizes.size();
 		transcriptSizeMean /= transcriptSizes.size();
 		geneSizeMean /= geneSizes.size();
+		GAPSizeMean /= geneGaps.size();
 		
 		Collections.sort(exonSizes);
 		Collections.sort(CDSSizes);
 		Collections.sort(transcriptSizes);
 		Collections.sort(geneSizes);
+		Collections.sort(geneGaps);
 		exonSizeMedian = exonSizes.get(exonSizes.size() /2);
 		CDSSizeMedian = CDSSizes.get(CDSSizes.size() /2);
 		transcriptSizeMedian = transcriptSizes.get(transcriptSizes.size() /2);
 		geneSizeMedian = geneSizes.get(geneSizes.size() /2);
-		
+		GAPSizeMedian = geneGaps.get(geneGaps.size() / 2);
 		
 		//Standard Deviation
 		exonStanDev = calculateStandardDeviation(exonSizes, exonSizeMean);
 		geneStanDev = calculateStandardDeviation(geneSizes, geneSizeMean);
 		transcriptStanDev = calculateStandardDeviation(transcriptSizes, transcriptSizeMean);
 		CDSStanDev = calculateStandardDeviation(CDSSizes, CDSSizeMean);
+		GAPStanDev = calculateStandardDeviation(geneGaps, GAPSizeMean);
 		
 	}//calculateStats
 	

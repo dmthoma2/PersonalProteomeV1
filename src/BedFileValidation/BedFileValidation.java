@@ -448,14 +448,14 @@ public class BedFileValidation {
 			
 			sb.append("\n\n\n");
 			sb.append("Results from bed file that did not match." + "\n");
-			sb.append("VaraintCount" + "\t" +"ProteinProduced" + "\t" + "BedLine" + "\n");
+			sb.append("VariantCount" + "\t" +"ProteinProduced" + "\t" + "BedLine" + "\n");
 			for(String s: misMatchedList){
 				sb.append(s + "\n");
 			}//for
 			
 			sb.append("\n\n\n");
 			sb.append("Results from bed file that matched." + "\n");
-			sb.append("VaraintCount" + "\t" +"ProteinProduced" + "\t" + "BedLine" + "\n");
+			sb.append("VariantCount" + "\t" +"ProteinProduced" + "\t" + "BedLine" + "\n");
 			for(String s: matchedList){
 				sb.append(s + "\n");
 			}//for

@@ -38,7 +38,7 @@ public class BedFileValidationDriver {
 		
 		
 		/*Brian Risk*/
-		File jobsDir = new File(Properties.peppyFileDirectory);
+		File jobsDir = new File(Properties.bedFileDirectory);
 		File[] potentialJobsFiles = jobsDir.listFiles();
 		ArrayList<File> jobFiles = new ArrayList<File>();
 		if (potentialJobsFiles != null) {
