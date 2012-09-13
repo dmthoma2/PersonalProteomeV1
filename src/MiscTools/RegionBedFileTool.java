@@ -19,7 +19,7 @@ import PersonalProteome.U;
  * reading in all of the input lines, information is calculated based on the range of amplification scores and each line is assigned a color.  Output lines are of the format:
  * ChromosomeName StartLoc	StopLoc	FileName-Amplification Score Strand StartLoc, StopLoc, Color
  * EXAMPLE: chr1	35907778	41545288	WHIM2-Amplification	1000	+	35907778	41545288	0,80,0
- *                                      Amplification Score
+ *                                             Amplification Score
  *    <----------------------"-"-------------------------0----------------------------"+"------------------------>
  * Bright red                                          Black                                                Bright green
  * 
